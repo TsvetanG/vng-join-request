@@ -1,1 +1,1 @@
-# consortia-trial-contract
+# vng-join-request
