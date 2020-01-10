@@ -56,7 +56,7 @@ public class VendorChannelJoinRequestChaincode extends ChaincodeBase {
 
         JoinRequestRegistryDTO foundRequest = fetchRequestById(stub, Arrays.asList(joinRequestDTO.getJoinRequestId()));
         if (foundRequest != null) {
-            ResponseUtils.newErrorResponse(
+            return ResponseUtils.newErrorResponse(
                     "Join Request already exists with the same ID: " + joinRequestDTO.getJoinRequestId());
         }
         stub.putStringState(joinRequestDTO.getJoinRequestId(), joinRequestDTO.toJson());
@@ -74,7 +74,7 @@ public class VendorChannelJoinRequestChaincode extends ChaincodeBase {
     private Response query(ChaincodeStub stub, List<String> params) {
         JoinRequestRegistryDTO joinRequestDTO = fetchRequestById(stub, params);
         if (joinRequestDTO == null) {
-            ResponseUtils.newErrorResponse("Join Request doesn't exists with ID: " + params.get(0));
+            return ResponseUtils.newErrorResponse("Join Request doesn't exists with ID: " + params.get(0));
         }
         try {
             return ResponseUtils.newSuccessResponse(joinRequestDTO.toJson().getBytes("UTF-8"));
@@ -116,7 +116,7 @@ public class VendorChannelJoinRequestChaincode extends ChaincodeBase {
         }
         JoinRequestRegistryDTO joinRequestDTO = fetchRequestById(stub, params);
         if (joinRequestDTO == null) {
-            ResponseUtils.newErrorResponse("Join Request doesn't exists with ID: " + params.get(0));
+            return ResponseUtils.newErrorResponse("Join Request doesn't exists with ID: " + params.get(0));
         }
 
         String joinRequestId = params.get(0);
