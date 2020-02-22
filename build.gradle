@@ -33,6 +33,6 @@ shadowJar {
     classifier = null
 
     manifest {
-        attributes 'Main-Class': 'io.consortia.governance.vendor.contract.VendorChannelJoinRequestChaincode'
+        attributes 'Main-Class': 'io.consortia.governance.vendor.contract.VendorChannelRequestChaincode'
     }
 }

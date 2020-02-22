@@ -11,9 +11,9 @@ import org.hyperledger.fabric.shim.ChaincodeBase;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ResponseUtils;
 
-public class VendorChannelJoinRequestChaincode extends ChaincodeBase {
+public class VendorChannelRequestChaincode extends ChaincodeBase {
 
-    private static Log _logger = LogFactory.getLog(VendorChannelJoinRequestChaincode.class);
+    private static Log _logger = LogFactory.getLog(VendorChannelRequestChaincode.class);
  
     @Override
     public Response init(ChaincodeStub stub) {
@@ -23,7 +23,7 @@ public class VendorChannelJoinRequestChaincode extends ChaincodeBase {
     @Override
     public Response invoke(ChaincodeStub stub) {
         try {
-            _logger.info("Invoke join request chaincode");
+            _logger.info("Invoke request chaincode");
             String func = stub.getFunction();
             List<String> params = stub.getParameters();
             if (func.equals("create")) {
@@ -49,17 +49,17 @@ public class VendorChannelJoinRequestChaincode extends ChaincodeBase {
      * @return
      */
     protected Response create(ChaincodeStub stub, List<String> params) {
-        String joinRequestAsString = new String(params.get(0));
-        _logger.debug(joinRequestAsString);
+        String requestAsString = new String(params.get(0));
+        _logger.debug(requestAsString);
 
-        JoinRequestRegistryDTO joinRequestDTO = JoinRequestRegistryDTO.Create(joinRequestAsString);
+        RequestRegistryDTO requestDTO = RequestRegistryDTO.Create(requestAsString);
 
-        JoinRequestRegistryDTO foundRequest = fetchRequestById(stub, Arrays.asList(joinRequestDTO.getJoinRequestId()));
+        RequestRegistryDTO foundRequest = fetchRequestById(stub, Arrays.asList(requestDTO.getRequestId()));
         if (foundRequest != null) {
             return ResponseUtils.newErrorResponse(
-                    "Join Request already exists with the same ID: " + joinRequestDTO.getJoinRequestId());
+                    "Request already exists with the same ID: " + requestDTO.getRequestId());
         }
-        stub.putStringState(joinRequestDTO.getJoinRequestId(), joinRequestDTO.toJson());
+        stub.putStringState(requestDTO.getRequestId(), requestDTO.toJson());
 
         return ResponseUtils.newSuccessResponse();
 
@@ -72,12 +72,12 @@ public class VendorChannelJoinRequestChaincode extends ChaincodeBase {
      * @return
      */
     private Response query(ChaincodeStub stub, List<String> params) {
-        JoinRequestRegistryDTO joinRequestDTO = fetchRequestById(stub, params);
-        if (joinRequestDTO == null) {
-            return ResponseUtils.newErrorResponse("Join Request doesn't exists with ID: " + params.get(0));
+        RequestRegistryDTO requestDTO = fetchRequestById(stub, params);
+        if (requestDTO == null) {
+            return ResponseUtils.newErrorResponse("Request doesn't exists with ID: " + params.get(0));
         }
         try {
-            return ResponseUtils.newSuccessResponse(joinRequestDTO.toJson().getBytes("UTF-8"));
+            return ResponseUtils.newSuccessResponse(requestDTO.toJson().getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
             return ResponseUtils.newErrorResponse(e);
         }
@@ -90,18 +90,18 @@ public class VendorChannelJoinRequestChaincode extends ChaincodeBase {
      * @param params
      * @return
      */
-    protected JoinRequestRegistryDTO fetchRequestById(ChaincodeStub stub, List<String> params) {
-        String joinRequestId = params.get(0);
-        String joinRequestAsString = stub.getStringState(joinRequestId);
+    protected RequestRegistryDTO fetchRequestById(ChaincodeStub stub, List<String> params) {
+        String requestId = params.get(0);
+        String requestAsString = stub.getStringState(requestId);
 
-        _logger.debug(joinRequestAsString);
+        _logger.debug(requestAsString);
 
-        if (joinRequestAsString == null || joinRequestAsString.equals("")) {
+        if (requestAsString == null || requestAsString.equals("")) {
             return null;
         }
 
-        JoinRequestRegistryDTO joinRequestDTO = JoinRequestRegistryDTO.Create(joinRequestAsString);
-        return joinRequestDTO;
+        RequestRegistryDTO requestDTO = RequestRegistryDTO.Create(requestAsString);
+        return requestDTO;
     }
 
     /**
@@ -114,21 +114,21 @@ public class VendorChannelJoinRequestChaincode extends ChaincodeBase {
         if (params.size() != 1) {
             return ResponseUtils.newErrorResponse("Incorrect number of arguments. Expecting 1");
         }
-        JoinRequestRegistryDTO joinRequestDTO = fetchRequestById(stub, params);
-        if (joinRequestDTO == null) {
-            return ResponseUtils.newErrorResponse("Join Request doesn't exists with ID: " + params.get(0));
+        RequestRegistryDTO requestDTO = fetchRequestById(stub, params);
+        if (requestDTO == null) {
+            return ResponseUtils.newErrorResponse("Request doesn't exists with ID: " + params.get(0));
         }
 
-        String joinRequestId = params.get(0);
-        _logger.debug("Delete join request with id: " + joinRequestId);
+        String requestId = params.get(0);
+        _logger.debug("Delete request with id: " + requestId);
 
-        stub.delState(joinRequestId);
+        stub.delState(requestId);
 
         return ResponseUtils.newSuccessResponse();
     }
 
     public static void main(String[] args) {
-        new VendorChannelJoinRequestChaincode().start(args);
+        new VendorChannelRequestChaincode().start(args);
     }
 
 }

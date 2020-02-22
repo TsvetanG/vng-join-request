@@ -11,23 +11,23 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
-public class JoinRequestRegistryDTO {
+public class RequestRegistryDTO {
     
-    private String joinRequestId;
+    private String requestId;
     
-    private String joiningAccountVendorServiceProvider;
+    private String accountVendorServiceProviderId;
     
     private String sourceContractId;
 
 
     @JsonCreator
-    public static JoinRequestRegistryDTO Create(String jsonString) {
+    public static RequestRegistryDTO Create(String jsonString) {
         ObjectMapper mapper = new ObjectMapper();
-        JoinRequestRegistryDTO caseDto = null;
+        RequestRegistryDTO caseDto = null;
         try {
-            caseDto = mapper.readValue(jsonString, JoinRequestRegistryDTO.class);
+            caseDto = mapper.readValue(jsonString, RequestRegistryDTO.class);
         } catch (Exception e) {
-            return new JoinRequestRegistryDTO();
+            return new RequestRegistryDTO();
         }
         return caseDto;
     }
